@@ -1,7 +1,5 @@
-
 $Name = "RESOURCE_GROUP_NAME";
 $AzureSubscriptionId = "AZURE_SUBSCRIPTION_ID";
-
 
 $NewDatabaseEdition = "Standard";
 $NewDatabasePricingTier = "S0" # the default database tier of Sitecore XP provisioning script is S1
@@ -48,34 +46,27 @@ try {
         }
         #endregion      
     }
-
-    
+        
     Write-Host "Group all databases into one server...";
 
     New-AzureRmSqlDatabaseCopy -ResourceGroupName $Name -ServerName "$Name-web-sql" -DatabaseName "$Name-web-db" -CopyServerName "$Name-sql" -CopyDatabaseName "$Name-web-db"
-
     Remove-AzureRmSqlServer -ResourceGroupName $Name -ServerName "$Name-web-sql" -Force
-
 
     Write-Host "Starting database scaling...";
 
     $DatabaseNames = "core-db", "master-db", "web-db", "reporting-db";
-
     Foreach ($DatabaseName in $DatabaseNames)
     {
         Set-AzureRmSqlDatabase -DatabaseName "$Name-$DatabaseName" -ServerName "$Name-sql" -ResourceGroupName $Name -Edition $NewDatabaseEdition -RequestedServiceObjectiveName $NewDatabasePricingTier
     }
-
     
     Write-Host "Starting hosting plan scaling...";
 
     $HostingPlans = "cd-hp", "cm-hp", "prc-hp", "rep-hp";
-
     Foreach($HostingPlan in $HostingPlans)
     {
         Set-AzureRmAppServicePlan -ResourceGroupName $Name -Name "$Name-$HostingPlan" -Tier $NewHostingPlanTier
     }
-
 
     Write-Host "Scaling finished.";
 }
