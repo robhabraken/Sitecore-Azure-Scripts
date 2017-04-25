@@ -1,0 +1,29 @@
+﻿{
+  "deploymentId": {
+    "value": ""
+  },
+  "rep.authentication.apikey": {
+	"value": ""
+  },
+  "analytics.mongodb.connectionstring": {
+    "value": ""
+  },
+  "tracking.live.mongodb.connectionstring": {
+    "value": ""
+  },
+  "tracking.history.mongodb.connectionstring": {
+    "value": ""
+  },
+  "tracking.contact.mongodb.connectionstring": {
+    "value": ""
+  },
+  "sqlserver.login": {
+    "value": ""
+  },
+  "sqlserver.password": {
+    "value": ""
+  },
+  "sitecoreSKU": {
+    "value": "xP1"
+  }
+}
