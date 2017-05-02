@@ -1,9 +1,9 @@
 # XP0 Double (CM/CD) - Re-provisioning application using msdeploy
-$ArmTemplatePath = ".\xp0d-azuredeploy-msdeploy.json";
-$ArmParametersPath = ".\xp0d-azuredeploy-redeploy.parameters.json";
+$ArmTemplatePath = "$($PSScriptRoot)\xp0d-azuredeploy-msdeploy.json";
+$ArmParametersPath = "$($PSScriptRoot)\xp0d-azuredeploy-redeploy.parameters.json";
 
 # read the contents of your Sitecore license file
-$licenseFileContent = Get-Content -Raw -Encoding UTF8 -Path ".\license.xml" | Out-String;
+$licenseFileContent = Get-Content -Raw -Encoding UTF8 -Path "$($PSScriptRoot)\license.xml" | Out-String;
 $Name = "YOUR_RESOURCE_GROUP_NAME";
 $location = "West Europe";
 $AzureSubscriptionId = "YOUR_SUBSCRIPTION_ID";

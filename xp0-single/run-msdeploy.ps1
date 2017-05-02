@@ -1,9 +1,9 @@
 # XP0 Single instance - Initial application msdeploy
-$ArmTemplatePath = ".\xp0s-azuredeploy-msdeploy.json";
-$ArmParametersPath = ".\xp0s-azuredeploy-msdeploy.parameters.json";
+$ArmTemplatePath = "$($PSScriptRoot)\xp0s-azuredeploy-msdeploy.json";
+$ArmParametersPath = "$($PSScriptRoot)\xp0s-azuredeploy-msdeploy.parameters.json";
 
 # read the contents of your Sitecore license file
-$licenseFileContent = Get-Content -Raw -Encoding UTF8 -Path ".\license.xml" | Out-String;
+$licenseFileContent = Get-Content -Raw -Encoding UTF8 -Path "$($PSScriptRoot)\license.xml" | Out-String;
 $Name = "YOUR_RESOURCE_GROUP_NAME";
 $location = "West Europe";
 $AzureSubscriptionId = "YOUR_SUBSCRIPTION_ID";

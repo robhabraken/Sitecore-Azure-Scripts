@@ -1,6 +1,6 @@
 # XP0 Double (CM/CD) - Infrastructure provisioning
-$ArmTemplatePath = ".\xp0d-azuredeploy-infra.json";
-$ArmParametersPath = ".\xp0d-azuredeploy-infra.parameters.json";
+$ArmTemplatePath = "$($PSScriptRoot)\xp0d-azuredeploy-infra.json";
+$ArmParametersPath = "$($PSScriptRoot)\xp0d-azuredeploy-infra.parameters.json";
 
 $Name = "YOUR_RESOURCE_GROUP_NAME";
 $location = "West Europe";

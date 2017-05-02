@@ -1,6 +1,6 @@
 # XP Full (CM/CD/REP/PRC) for XP1 to XP5 - Infrastructure provisioning
-$ArmTemplatePath = ".\xp-azuredeploy-infra.json";
-$ArmParametersPath = ".\xp-azuredeploy-infra.parameters.json";
+$ArmTemplatePath = "$($PSScriptRoot)\xp-azuredeploy-infra.json";
+$ArmParametersPath = "$($PSScriptRoot)\xp-azuredeploy-infra.parameters.json";
 
 $Name = "YOUR_RESOURCE_GROUP_NAME";
 $location = "West Europe";

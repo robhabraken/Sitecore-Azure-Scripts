@@ -1,6 +1,6 @@
 # XP0 Single instance - Infrastructure provisioning
-$ArmTemplatePath = ".\xp0s-azuredeploy-infra.json";
-$ArmParametersPath = ".\xp0s-azuredeploy-infra.parameters.json";
+$ArmTemplatePath = "$($PSScriptRoot)\xp0s-azuredeploy-infra.json";
+$ArmParametersPath = "$($PSScriptRoot)\xp0s-azuredeploy-infra.parameters.json";
 
 $Name = "YOUR_RESOURCE_GROUP_NAME";
 $location = "West Europe";
