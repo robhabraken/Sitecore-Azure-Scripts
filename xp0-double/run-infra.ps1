@@ -2,6 +2,7 @@
 $ArmTemplatePath = "$($PSScriptRoot)\xp0d-azuredeploy-infra.json";
 $ArmParametersPath = "$($PSScriptRoot)\xp0d-azuredeploy-infra.parameters.json";
 
+$ErrorActionPreference = 'Stop'
 $Name = "YOUR_RESOURCE_GROUP_NAME";
 $location = "West Europe";
 $AzureSubscriptionId = "YOUR_SUBSCRIPTION_ID";
@@ -51,12 +52,10 @@ try {
         #region Use Manual Login
         try 
         {
-            Write-Host "inside try"
             Set-AzureRmContext -SubscriptionID $AzureSubscriptionId
         }
         catch 
         {
-            Write-Host "inside catch"
             Login-AzureRmAccount
             Set-AzureRmContext -SubscriptionID $AzureSubscriptionId
         }
@@ -71,12 +70,11 @@ try {
         New-AzureRmResourceGroup -Name $Name -Location $location;
     }
 
-    Write-Verbose "Starting ARM deployment...";
+    Write-Host "Starting ARM deployment...";
     New-AzureRmResourceGroupDeployment `
         -Name "sitecore-infra" `
-        -ResourceGroupName `
-        $Name -TemplateFile `
-        $ArmTemplatePath `
+        -ResourceGroupName $Name `
+        -TemplateFile $ArmTemplatePath `
         -TemplateParameterObject $additionalParams;
         # -DeploymentDebugLogLevel All -Debug;
 
