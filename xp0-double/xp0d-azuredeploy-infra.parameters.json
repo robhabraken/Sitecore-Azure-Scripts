@@ -2,9 +2,6 @@
   "deploymentId": {
     "value": ""
   },
-  "rep.authentication.apikey": {
-	"value": ""
-  },
   "analytics.mongodb.connectionstring": {
     "value": ""
   },

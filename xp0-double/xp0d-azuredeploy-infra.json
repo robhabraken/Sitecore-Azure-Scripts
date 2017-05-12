@@ -237,10 +237,6 @@
         "provider": "b51535c2-ab3e-4a68-95f8-e2e3c9a19299"
       }
     },
-    "rep.authentication.apikey": {
-      "type": "securestring",
-      "minLength": 32
-    },
     "sitecoreSKU" : {
       "type" : "string",
       "defaultValue": "xP1",
