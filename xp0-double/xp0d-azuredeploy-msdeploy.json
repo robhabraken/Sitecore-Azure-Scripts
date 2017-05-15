@@ -190,7 +190,9 @@
                   "Application Insights Instrumentation Key": "[reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.appInsightsInstrumentationKey.value]",
                   "Application Insights Role": "CM",
                   "KeepAlive Url": "[concat('https://', reference(resourceId('Microsoft.Web/sites', variables('cmWebAppNameTidy'))).hostNames[0], '/sitecore/service/keepalive.aspx')]",
-                  "License Xml": "[variables('licenseXml')]"
+                  "License Xml": "[variables('licenseXml')]",
+                  "IP Security Client IP": "[parameters('security_clientIp')]",
+                  "IP Security Client IP Mask": "[parameters('security_clientIpMask')]"
                 }
               }
             }
