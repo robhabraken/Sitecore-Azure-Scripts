@@ -2,18 +2,6 @@
   "sitecore_admin_password": {
     "value": ""
   },
-  "analytics_mongodb_connectionstring": {
-    "value": ""
-  },
-  "tracking_live_mongodb_connectionstring": {
-    "value": ""
-  },
-  "tracking_history_mongodb_connectionstring": {
-    "value": ""
-  },
-  "tracking_contact_mongodb_connectionstring": {
-    "value": ""
-  },
   "sqlserver_login": {
     "value": ""
   },

@@ -116,18 +116,6 @@
       "minLength": 8,
       "defaultValue": "[concat(toUpper(uniqueString('cd-web')), '@', uniqueString(parameters('sqlserver_password')))]"
     },
-    "analytics_mongodb_connectionstring": {
-      "type": "securestring"
-    },
-    "tracking_live_mongodb_connectionstring": {
-      "type": "securestring"
-    },
-    "tracking_history_mongodb_connectionstring": {
-      "type": "securestring"
-    },
-    "tracking_contact_mongodb_connectionstring": {
-      "type": "securestring"
-    },
     "licenseXml": {
       "type": "securestring"
     },

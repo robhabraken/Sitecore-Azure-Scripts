@@ -2,6 +2,8 @@
 $ArmTemplatePath = "$($PSScriptRoot)\xp0d-azuredeploy-msdeploy.json";
 $ArmParametersPath = "$($PSScriptRoot)\xp0d-azuredeploy-msdeploy.parameters.json";
 
+$ErrorActionPreference = 'Stop'
+
 # read the contents of your Sitecore license file
 $licenseFileContent = Get-Content -Raw -Encoding UTF8 -Path "$($PSScriptRoot)\license.xml" | Out-String;
 $Name = "YOUR_RESOURCE_GROUP_NAME";
@@ -90,12 +92,10 @@ try {
         #region Use Manual Login
         try 
         {
-            Write-Host "inside try"
             Set-AzureRmContext -SubscriptionID $AzureSubscriptionId
         }
         catch 
         {
-            Write-Host "inside catch"
             Login-AzureRmAccount
             Set-AzureRmContext -SubscriptionID $AzureSubscriptionId
         }
@@ -116,7 +116,7 @@ try {
     $sitecoreDeploymentOutputAsJson =  ConvertTo-Json $sitecoreDeploymentOutput -Depth 5
     $sitecoreDeploymentOutputAsHashTable = ConvertPSObjectToHashtable $(ConvertFrom-Json $sitecoreDeploymentOutputAsJson)
 
-    Write-Verbose "Starting ARM deployment...";
+    Write-Host "Starting ARM deployment...";
     New-AzureRmResourceGroupDeployment `
         -Name "sitecore-msdeploy" `
         -ResourceGroupName $Name `
