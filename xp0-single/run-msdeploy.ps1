@@ -8,21 +8,6 @@ $Name = "YOUR_RESOURCE_GROUP_NAME";
 $location = "West Europe";
 $AzureSubscriptionId = "YOUR_SUBSCRIPTION_ID";
 
-#region Create Params Object
-# license file needs to be secure string and adding the params as a hashtable is the only way to do it
-$additionalParams = New-Object -TypeName Hashtable;
-
-$params = Get-Content $ArmParametersPath -Raw | ConvertFrom-Json;
-
-foreach($p in $params | Get-Member -MemberType *Property)
-{
-    $additionalParams.Add($p.Name, $params.$($p.Name).value);
-}
-
-$additionalParams.Set_Item('licenseXml', $licenseFileContent);
-
-#endregion
-
 #region Service Principle Details
 
 # By default this script will prompt you for your Azure credentials but you can update the script to use an Azure Service Principal instead by following the details at the link below and updating the four variables below once you are done.
@@ -101,6 +86,36 @@ try {
         }
         #endregion      
     }
+
+    #region Create Params Object
+    # license file needs to be secure string and adding the params as a hashtable is the only way to do it
+    $additionalParams = New-Object -TypeName Hashtable;
+
+    $params = Get-Content $ArmParametersPath -Raw | ConvertFrom-Json;
+
+    foreach($p in $params | Get-Member -MemberType *Property)
+    {
+        # Check if the parameter is a reference to a Key Vault secret
+        if (($params.$($p.Name).reference) -and
+            ($params.$($p.Name).reference.keyVault) -and
+            ($params.$($p.Name).reference.keyVault.id) -and
+            ($params.$($p.Name).reference.secretName))
+        {
+            $vaultName = Split-Path $params.$($p.Name).reference.keyVault.id -Leaf
+            $secretName = $params.$($p.Name).reference.secretName
+            $secret = (Get-AzureKeyVaultSecret -VaultName $vaultName -Name $secretName).SecretValue
+
+            $additionalParams.Add($p.Name, $secret);
+        }
+        # Or a normal plaintext parameter
+        else
+        {
+            $additionalParams.Add($p.Name, $params.$($p.Name).value);
+        }
+    }
+
+    $additionalParams.Set_Item('licenseXml', $licenseFileContent);
+    #endregion
 
     Write-Host "Check if resource group already exists..."
     $notPresent = Get-AzureRmResourceGroup -Name $Name -ev notPresent -ea 0;
