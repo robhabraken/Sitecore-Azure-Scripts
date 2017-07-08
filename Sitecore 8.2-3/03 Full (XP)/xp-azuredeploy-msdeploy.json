@@ -1,0 +1,473 @@
+﻿{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "variables": {
+    "webApiVersion": "2016-08-01",
+    "searchApiVersion": "2015-08-19",
+    "searchPreviewApiVersion": "2015-02-28-preview",
+    "redisApiVersion": "2016-04-01",
+    "appInsightsApiVersion": "2015-05-01",
+    "cmWebAppNameTidy": "[parameters('provisioningOutput').cmWebAppNameTidy.value]",
+    "cdWebAppNameTidy": "[parameters('provisioningOutput').cdWebAppNameTidy.value]",
+    "prcWebAppNameTidy": "[parameters('provisioningOutput').prcWebAppNameTidy.value]",
+    "repWebAppNameTidy": "[parameters('provisioningOutput').repWebAppNameTidy.value]",
+    "dbServerNameTidy": "[parameters('provisioningOutput').dbServerNameTidy.value]",
+    "webDbServerNameTidy": "[parameters('provisioningOutput').webDbServerNameTidy.value]",
+    "coreDbNameTidy": "[parameters('provisioningOutput').coreDbNameTidy.value]",
+    "webDbNameTidy": "[parameters('provisioningOutput').webDbNameTidy.value]",
+    "masterDbNameTidy": "[parameters('provisioningOutput').masterDbNameTidy.value]",
+    "repDbNameTidy": "[parameters('provisioningOutput').repDbNameTidy.value]",
+    "analyticsMongoDbConnStrTidy": "[parameters('provisioningOutput').analyticsMongoDbConnStrTidy.value]",
+    "trackingLiveMongoDbConnStrTidy": "[parameters('provisioningOutput').trackingLiveMongoDbConnStrTidy.value]",
+    "trackingHistoryMongoDbConnStrTidy": "[parameters('provisioningOutput').trackingHistoryMongoDbConnStrTidy.value]",
+    "trackingContactMongoDbConnStrTidy": "[parameters('provisioningOutput').trackingContactMongoDbConnStrTidy.value]",
+    "searchServiceNameTidy": "[parameters('provisioningOutput').searchServiceNameTidy.value]",
+    "redisConnStrTidy": "[parameters('provisioningOutput').redisConnStrTidy.value]",
+    "appInsightsNameTidy": "[parameters('provisioningOutput').appInsightsNameTidy.value]",
+    "licenseXml": "[parameters('licenseXml')]"
+  },
+  "parameters": {
+    "provisioningOutput": {
+      "type": "object"
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]"
+    },
+    "cm_msdeploy_packageurl": {
+      "type": "securestring"
+    },
+    "cd_msdeploy_packageurl": {
+      "type": "securestring"
+    },
+    "prc_msdeploy_packageurl": {
+      "type": "securestring"
+    },
+    "rep_msdeploy_packageurl": {
+      "type": "securestring"
+    },
+    "sqlserver_login": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sqlserver_password": {
+      "type": "securestring",
+      "minLength": 8
+    },
+    "web_sqlserver_login": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "[parameters('sqlserver_login')]"
+    },
+    "web_sqlserver_password": {
+      "type": "securestring",
+      "minLength": 8,
+      "defaultValue": "[parameters('sqlserver_password')]"
+    },
+    "cm_core_sqldatabase_username": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "[concat('cm-core-', deployment().name, '-user')]"
+    },
+    "cm_core_sqldatabase_password": {
+      "type": "securestring",
+      "minLength": 8,
+      "defaultValue": "[concat(toUpper(uniqueString('cm-core')), '@', uniqueString(parameters('sqlserver_password')))]"
+    },
+    "cm_master_sqldatabase_username": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "[concat('cm-master-', deployment().name, '-user')]"
+    },
+    "cm_master_sqldatabase_password": {
+      "type": "securestring",
+      "minLength": 8,
+      "defaultValue": "[concat(toUpper(uniqueString('cm-master')), '@', uniqueString(parameters('sqlserver_password')))]"
+    },
+    "cm_web_sqldatabase_username": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "[concat('cm-web-', deployment().name, '-user')]"
+    },
+    "cm_web_sqldatabase_password": {
+      "type": "securestring",
+      "minLength": 8,
+      "defaultValue": "[concat(toUpper(uniqueString('cm-web')), '@', uniqueString(parameters('sqlserver_password')))]"
+    },
+    "cd_core_sqldatabase_username": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "[concat('cd-core-', deployment().name, '-user')]"
+    },
+    "cd_core_sqldatabase_password": {
+      "type": "securestring",
+      "minLength": 8,
+      "defaultValue": "[concat(toUpper(uniqueString('cd-core')), '@', uniqueString(parameters('sqlserver_password')))]"
+    },
+    "cd_web_sqldatabase_username": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "[concat('cd-web-', deployment().name, '-user')]"
+    },
+    "cd_web_sqldatabase_password": {
+      "type": "securestring",
+      "minLength": 8,
+      "defaultValue": "[concat(toUpper(uniqueString('cd-web')), '@', uniqueString(parameters('sqlserver_password')))]"
+    },
+    "prc_core_sqldatabase_username": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "[concat('prc-core-', deployment().name, '-user')]"
+    },
+    "prc_core_sqldatabase_password": {
+      "type": "securestring",
+      "minLength": 8,
+      "defaultValue": "[concat(toUpper(uniqueString('prc-core')), '@', uniqueString(parameters('sqlserver_password')))]"
+    },
+    "prc_master_sqldatabase_username": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "[concat('prc-master-', deployment().name, '-user')]"
+    },
+    "prc_master_sqldatabase_password": {
+      "type": "securestring",
+      "minLength": 8,
+      "defaultValue": "[concat(toUpper(uniqueString('prc-master')), '@', uniqueString(parameters('sqlserver_password')))]"
+    },
+    "prc_web_sqldatabase_username": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "[concat('prc-web-', deployment().name, '-user')]"
+    },
+    "prc_web_sqldatabase_password": {
+      "type": "securestring",
+      "minLength": 8,
+      "defaultValue": "[concat(toUpper(uniqueString('prc-web')), '@', uniqueString(parameters('sqlserver_password')))]"
+    },
+    "prc_reporting_sqldatabase_username": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "[concat('prc-reporting-', deployment().name, '-user')]"
+    },
+    "prc_reporting_sqldatabase_password": {
+      "type": "securestring",
+      "minLength": 8,
+      "defaultValue": "[concat(toUpper(uniqueString('prc-reporting')), '@', uniqueString(parameters('sqlserver_password')))]"
+    },
+    "rep_core_sqldatabase_username": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "[concat('rep-core-', deployment().name, '-user')]"
+    },
+    "rep_core_sqldatabase_password": {
+      "type": "securestring",
+      "minLength": 8,
+      "defaultValue": "[concat(toUpper(uniqueString('rep-core')), '@', uniqueString(parameters('sqlserver_password')))]"
+    },
+    "rep_master_sqldatabase_username": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "[concat('rep-master-', deployment().name, '-user')]"
+    },
+    "rep_master_sqldatabase_password": {
+      "type": "securestring",
+      "minLength": 8,
+      "defaultValue": "[concat(toUpper(uniqueString('rep-master')), '@', uniqueString(parameters('sqlserver_password')))]"
+    },
+    "rep_web_sqldatabase_username": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "[concat('rep-web-', deployment().name, '-user')]"
+    },
+    "rep_web_sqldatabase_password": {
+      "type": "securestring",
+      "minLength": 8,
+      "defaultValue": "[concat(toUpper(uniqueString('rep-web')), '@', uniqueString(parameters('sqlserver_password')))]"
+    },
+    "rep_reporting_sqldatabase_username": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "[concat('rep-reporting-', deployment().name, '-user')]"
+    },
+    "rep_reporting_sqldatabase_password": {
+      "type": "securestring",
+      "minLength": 8,
+      "defaultValue": "[concat(toUpper(uniqueString('rep-reporting')), '@', uniqueString(parameters('sqlserver_password')))]"
+    },
+    "licenseXml": {
+      "type": "securestring"
+    },
+    "security_clientIp": {
+      "type": "string",
+      "defaultValue": "0.0.0.0"
+    },
+    "security_clientIpMask": {
+      "type": "string",
+      "defaultValue": "0.0.0.0"
+    },
+    "sitecore_admin_password": {
+      "type": "securestring",
+      "minLength": 8,
+      "maxLength": 128
+    },
+    "rep_authentication_apikey": {
+      "type": "securestring",
+      "minLength": 32
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Web/sites",
+      "name": "[variables('cmWebAppNameTidy')]",
+      "apiVersion": "[variables('webApiVersion')]",
+      "properties": {},
+      "location": "[parameters('location')]",
+      "resources": [
+        {
+          "type": "slots",
+          "name": "cm-staging",
+          "apiVersion": "[variables('webApiVersion')]",
+          "properties": {},
+          "location": "[parameters('location')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('cmWebAppNameTidy'))]"
+          ],
+          "resources": [
+            {
+              "name": "MSDeploy",
+              "type": "extensions",
+              "location": "[parameters('location')]",
+              "apiVersion": "[variables('webApiVersion')]",
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites/slots', variables('cmWebAppNameTidy'), 'cm-staging')]"
+              ],
+              "properties": {
+                "packageUri": "[parameters('cm_msdeploy_packageurl')]",
+                "dbType": "SQL",
+                "connectionString": "[concat('Data Source=tcp:', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.dbServerFullyQualified.value, ',1433;Initial Catalog=master;User Id=', parameters('sqlserver_login'), '@', variables('dbServerNameTidy'), ';Password=', parameters('sqlserver_password'), ';')]",
+                "setParameters": {
+                  "Application Path": "[variables('cmWebAppNameTidy')]",
+                  "Sitecore Admin New Password": "[parameters('sitecore_admin_password')]",
+                  "Core DB User Name": "[parameters('cm_core_sqldatabase_username')]",
+                  "Core DB Password": "[parameters('cm_core_sqldatabase_password')]",
+                  "Core Admin Connection String": "[concat('Encrypt=True;TrustServerCertificate=False;Data Source=', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.dbServerFullyQualified.value, ',1433;Initial Catalog=',variables('coreDbNameTidy'),';User Id=', parameters('sqlserver_login'), ';Password=', parameters('sqlserver_password'), ';')]",
+                  "Core Connection String": "[concat('Encrypt=True;TrustServerCertificate=False;Data Source=', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.dbServerFullyQualified.value, ',1433;Initial Catalog=',variables('coreDbNameTidy'),';User Id=', parameters('cm_core_sqldatabase_username'), ';Password=', parameters('cm_core_sqldatabase_password'), ';')]",
+                  "Master DB User Name": "[parameters('cm_master_sqldatabase_username')]",
+                  "Master DB Password": "[parameters('cm_master_sqldatabase_password')]",
+                  "Master Admin Connection String": "[concat('Encrypt=True;TrustServerCertificate=False;Data Source=', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.dbServerFullyQualified.value, ',1433;Initial Catalog=',variables('masterDbNameTidy'),';User Id=', parameters('sqlserver_login'), ';Password=', parameters('sqlserver_password'), ';')]",
+                  "Master Connection String": "[concat('Encrypt=True;TrustServerCertificate=False;Data Source=', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.dbServerFullyQualified.value, ',1433;Initial Catalog=',variables('masterDbNameTidy'),';User Id=', parameters('cm_master_sqldatabase_username'), ';Password=', parameters('cm_master_sqldatabase_password'), ';')]",
+                  "Web DB User Name": "[parameters('cm_web_sqldatabase_username')]",
+                  "Web DB Password": "[parameters('cm_web_sqldatabase_password')]",
+                  "Web Admin Connection String": "[concat('Encrypt=True;TrustServerCertificate=False;Data Source=', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.webDbServerFullyQualified.value, ',1433;Initial Catalog=',variables('webDbNameTidy'),';User Id=', parameters('web_sqlserver_login'), ';Password=', parameters('web_sqlserver_password'), ';')]",
+                  "Web Connection String": "[concat('Encrypt=True;TrustServerCertificate=False;Data Source=', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.webDbServerFullyQualified.value, ',1433;Initial Catalog=',variables('webDbNameTidy'),';User Id=', parameters('cm_web_sqldatabase_username'), ';Password=', parameters('cm_web_sqldatabase_password'), ';')]",
+                  "Reporting Admin Connection String": "[concat('Encrypt=True;TrustServerCertificate=False;Data Source=', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.dbServerFullyQualified.value, ',1433;Initial Catalog=',variables('repDbNameTidy'),';User Id=', parameters('sqlserver_login'), ';Password=', parameters('sqlserver_password'), ';')]",
+                  "Cloud Search Connection String": "[concat('serviceUrl=https://', variables('searchServiceNameTidy'), '.search.windows.net;apiVersion=', variables('searchPreviewApiVersion'), ';apiKey=', listAdminKeys(resourceId('Microsoft.Search/searchServices', variables('searchServiceNameTidy')), variables('searchApiVersion')).primaryKey)]",
+                  "Analytics Connection String": "[variables('analyticsMongoDbConnStrTidy')]",
+                  "Tracking Live Connection String": "[variables('trackingLiveMongoDbConnStrTidy')]",
+                  "Tracking Contact Connection String": "[variables('trackingContactMongoDbConnStrTidy')]",
+                  "Reporting Service Url": "[concat('https://', reference(resourceId('Microsoft.Web/sites', variables('repWebAppNameTidy'))).hostNames[0])]",
+                  "Reporting Service Api Key": "[parameters('rep_authentication_apikey')]",
+                  "Application Insights Instrumentation Key": "[reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.appInsightsInstrumentationKey.value]",
+                  "Application Insights Role": "CM",
+                  "KeepAlive Url": "[concat('https://', reference(resourceId('Microsoft.Web/sites', variables('cmWebAppNameTidy'))).hostNames[0], '/sitecore/service/keepalive.aspx')]",
+                  "License Xml": "[variables('licenseXml')]",
+                  "IP Security Client IP": "[parameters('security_clientIp')]",
+                  "IP Security Client IP Mask": "[parameters('security_clientIpMask')]"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "name": "[variables('cdWebAppNameTidy')]",
+      "apiVersion": "[variables('webApiVersion')]",
+      "properties": {},
+      "location": "[parameters('location')]",
+      "resources": [
+        {
+          "type": "slots",
+          "name": "cd-staging",
+          "apiVersion": "[variables('webApiVersion')]",
+          "properties": {},
+          "location": "[parameters('location')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('cdWebAppNameTidy'))]"
+          ],
+          "resources": [
+            {
+              "name": "MSDeploy",
+              "type": "extensions",
+              "location": "[parameters('location')]",
+              "apiVersion": "[variables('webApiVersion')]",
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites/slots', variables('cdWebAppNameTidy'), 'cd-staging')]",
+                "[concat('Microsoft.Web/sites/', variables('cmWebAppNameTidy'), '/slots/cm-staging/extensions/MSDeploy')]"
+              ],
+              "properties": {
+                "packageUri": "[parameters('cd_msdeploy_packageurl')]",
+                "dbType": "SQL",
+                "connectionString": "[concat('Data Source=tcp:', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.dbServerFullyQualified.value, ',1433;Initial Catalog=master;User Id=', parameters('sqlserver_login'), '@', variables('dbServerNameTidy'), ';Password=', parameters('sqlserver_password'), ';')]",
+                "setParameters": {
+                  "Application Path": "[variables('cdWebAppNameTidy')]",
+                  "Sitecore Admin New Password": "[parameters('sitecore_admin_password')]",
+                  "Core DB User Name": "[parameters('cd_core_sqldatabase_username')]",
+                  "Core DB Password": "[parameters('cd_core_sqldatabase_password')]",
+                  "Core Admin Connection String": "[concat('Encrypt=True;TrustServerCertificate=False;Data Source=', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.dbServerFullyQualified.value, ',1433;Initial Catalog=',variables('coreDbNameTidy'),';User Id=', parameters('sqlserver_login'), ';Password=', parameters('sqlserver_password'), ';')]",
+                  "Core Connection String": "[concat('Encrypt=True;TrustServerCertificate=False;Data Source=', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.dbServerFullyQualified.value, ',1433;Initial Catalog=',variables('coreDbNameTidy'),';User Id=', parameters('cd_core_sqldatabase_username'), ';Password=', parameters('cd_core_sqldatabase_password'), ';')]",
+                  "Web DB User Name": "[parameters('cd_web_sqldatabase_username')]",
+                  "Web DB Password": "[parameters('cd_web_sqldatabase_password')]",
+                  "Web Admin Connection String": "[concat('Encrypt=True;TrustServerCertificate=False;Data Source=', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.webDbServerFullyQualified.value, ',1433;Initial Catalog=',variables('webDbNameTidy'),';User Id=', parameters('web_sqlserver_login'), ';Password=', parameters('web_sqlserver_password'), ';')]",
+                  "Web Connection String": "[concat('Encrypt=True;TrustServerCertificate=False;Data Source=', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.webDbServerFullyQualified.value, ',1433;Initial Catalog=',variables('webDbNameTidy'),';User Id=', parameters('cd_web_sqldatabase_username'), ';Password=', parameters('cd_web_sqldatabase_password'), ';')]",
+                  "Cloud Search Connection String": "[concat('serviceUrl=https://', variables('searchServiceNameTidy'), '.search.windows.net;apiVersion=', variables('searchPreviewApiVersion'), ';apiKey=', listAdminKeys(resourceId('Microsoft.Search/searchServices', variables('searchServiceNameTidy')), variables('searchApiVersion')).primaryKey)]",
+                  "Analytics Connection String": "[variables('analyticsMongoDbConnStrTidy')]",
+                  "Tracking Live Connection String": "[variables('trackingLiveMongoDbConnStrTidy')]",
+                  "Tracking Contact Connection String": "[variables('trackingContactMongoDbConnStrTidy')]",
+                  "Application Insights Instrumentation Key": "[reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.appInsightsInstrumentationKey.value]",
+                  "Application Insights Role": "CD",
+                  "KeepAlive Url": "[concat('https://', reference(resourceId('Microsoft.Web/sites', variables('cdWebAppNameTidy'))).hostNames[0], '/sitecore/service/keepalive.aspx')]",
+                  "Redis Connection String": "[variables('redisConnStrTidy')]",
+                  "License Xml": "[variables('licenseXml')]"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "name": "[variables('prcWebAppNameTidy')]",
+      "apiVersion": "[variables('webApiVersion')]",
+      "properties": {},
+      "location": "[parameters('location')]",
+      "resources": [
+        {
+          "type": "slots",
+          "name": "prc-staging",
+          "apiVersion": "[variables('webApiVersion')]",
+          "properties": {},
+          "location": "[parameters('location')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('prcWebAppNameTidy'))]"
+          ],
+          "resources": [
+            {
+              "name": "MSDeploy",
+              "type": "extensions",
+              "location": "[parameters('location')]",
+              "apiVersion": "[variables('webApiVersion')]",
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites/slots', variables('prcWebAppNameTidy'), 'prc-staging')]",
+                "[concat('Microsoft.Web/sites/', variables('cmWebAppNameTidy'), '/slots/cm-staging/extensions/MSDeploy')]"
+              ],
+              "properties": {
+                "packageUri": "[parameters('prc_msdeploy_packageurl')]",
+                "dbType": "SQL",
+                "connectionString": "[concat('Data Source=tcp:', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.dbServerFullyQualified.value, ',1433;Initial Catalog=master;User Id=', parameters('sqlserver_login'), '@', variables('dbServerNameTidy'), ';Password=', parameters('sqlserver_password'), ';')]",
+                "setParameters": {
+                  "Application Path": "[variables('prcWebAppNameTidy')]",
+                  "Sitecore Admin New Password": "[parameters('sitecore_admin_password')]",
+                  "Core DB User Name": "[parameters('prc_core_sqldatabase_username')]",
+                  "Core DB Password": "[parameters('prc_core_sqldatabase_password')]",
+                  "Core Admin Connection String": "[concat('Encrypt=True;TrustServerCertificate=False;Data Source=', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.dbServerFullyQualified.value, ',1433;Initial Catalog=',variables('coreDbNameTidy'),';User Id=', parameters('sqlserver_login'), ';Password=', parameters('sqlserver_password'), ';')]",
+                  "Core Connection String": "[concat('Encrypt=True;TrustServerCertificate=False;Data Source=', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.dbServerFullyQualified.value, ',1433;Initial Catalog=',variables('coreDbNameTidy'),';User Id=', parameters('prc_core_sqldatabase_username'), ';Password=', parameters('prc_core_sqldatabase_password'), ';')]",
+                  "Master DB User Name": "[parameters('prc_master_sqldatabase_username')]",
+                  "Master DB Password": "[parameters('prc_master_sqldatabase_password')]",
+                  "Master Admin Connection String": "[concat('Encrypt=True;TrustServerCertificate=False;Data Source=', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.dbServerFullyQualified.value, ',1433;Initial Catalog=',variables('masterDbNameTidy'),';User Id=', parameters('sqlserver_login'), ';Password=', parameters('sqlserver_password'), ';')]",
+                  "Master Connection String": "[concat('Encrypt=True;TrustServerCertificate=False;Data Source=', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.dbServerFullyQualified.value, ',1433;Initial Catalog=',variables('masterDbNameTidy'),';User Id=', parameters('prc_master_sqldatabase_username'), ';Password=', parameters('prc_master_sqldatabase_password'), ';')]",
+                  "Web DB User Name": "[parameters('prc_web_sqldatabase_username')]",
+                  "Web DB Password": "[parameters('prc_web_sqldatabase_password')]",
+                  "Web Admin Connection String": "[concat('Encrypt=True;TrustServerCertificate=False;Data Source=', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.webDbServerFullyQualified.value, ',1433;Initial Catalog=',variables('webDbNameTidy'),';User Id=', parameters('web_sqlserver_login'), ';Password=', parameters('web_sqlserver_password'), ';')]",
+                  "Web Connection String": "[concat('Encrypt=True;TrustServerCertificate=False;Data Source=', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.webDbServerFullyQualified.value, ',1433;Initial Catalog=',variables('webDbNameTidy'),';User Id=', parameters('prc_web_sqldatabase_username'), ';Password=', parameters('prc_web_sqldatabase_password'), ';')]",
+                  "Reporting DB User Name": "[parameters('prc_reporting_sqldatabase_username')]",
+                  "Reporting DB Password": "[parameters('prc_reporting_sqldatabase_password')]",
+                  "Reporting Admin Connection String": "[concat('Encrypt=True;TrustServerCertificate=False;Data Source=', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.dbServerFullyQualified.value, ',1433;Initial Catalog=',variables('repDbNameTidy'),';User Id=', parameters('sqlserver_login'), ';Password=', parameters('sqlserver_password'), ';')]",
+                  "Reporting Connection String": "[concat('Encrypt=True;TrustServerCertificate=False;Data Source=', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.dbServerFullyQualified.value, ',1433;Initial Catalog=',variables('repDbNameTidy'),';User Id=', parameters('prc_reporting_sqldatabase_username'), ';Password=', parameters('prc_reporting_sqldatabase_password'), ';')]",
+                  "Analytics Connection String": "[variables('analyticsMongoDbConnStrTidy')]",
+                  "Cloud Search Connection String": "[concat('serviceUrl=https://', variables('searchServiceNameTidy'), '.search.windows.net;apiVersion=', variables('searchPreviewApiVersion'), ';apiKey=', listAdminKeys(resourceId('Microsoft.Search/searchServices', variables('searchServiceNameTidy')), variables('searchApiVersion')).primaryKey)]",
+                  "Tracking Live Connection String": "[variables('trackingLiveMongoDbConnStrTidy')]",
+                  "Tracking History Connection String": "[variables('trackingHistoryMongoDbConnStrTidy')]",
+                  "Tracking Contact Connection String": "[variables('trackingContactMongoDbConnStrTidy')]",
+                  "Application Insights Instrumentation Key": "[reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.appInsightsInstrumentationKey.value]",
+                  "Application Insights Role": "Processing",
+                  "KeepAlive Url": "[concat('https://', reference(resourceId('Microsoft.Web/sites', variables('prcWebAppNameTidy'))).hostNames[0], '/sitecore/service/keepalive.aspx')]",
+                  "License Xml": "[variables('licenseXml')]",
+                  "IP Security Client IP": "[parameters('security_clientIp')]",
+                  "IP Security Client IP Mask": "[parameters('security_clientIpMask')]"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "name": "[variables('repWebAppNameTidy')]",
+      "apiVersion": "[variables('webApiVersion')]",
+      "properties": {},
+      "location": "[parameters('location')]",
+      "resources": [
+        {
+          "type": "slots",
+          "name": "rep-staging",
+          "apiVersion": "[variables('webApiVersion')]",
+          "properties": {},
+          "location": "[parameters('location')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('repWebAppNameTidy'))]"
+          ],
+          "resources": [
+            {
+              "name": "MSDeploy",
+              "type": "extensions",
+              "location": "[parameters('location')]",
+              "apiVersion": "[variables('webApiVersion')]",
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites/slots', variables('repWebAppNameTidy'), 'rep-staging')]",
+                "[concat('Microsoft.Web/sites/', variables('cmWebAppNameTidy'), '/slots/cm-staging/extensions/MSDeploy')]"
+              ],
+              "properties": {
+                "packageUri": "[parameters('rep_msdeploy_packageurl')]",
+                "dbType": "SQL",
+                "connectionString": "[concat('Data Source=tcp:', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.dbServerFullyQualified.value, ',1433;Initial Catalog=master;User Id=', parameters('sqlserver_login'), '@', variables('dbServerNameTidy'), ';Password=', parameters('sqlserver_password'), ';')]",
+                "setParameters": {
+                  "Application Path": "[variables('repWebAppNameTidy')]",
+                  "Sitecore Admin New Password": "[parameters('sitecore_admin_password')]",
+                  "Core DB User Name": "[parameters('rep_core_sqldatabase_username')]",
+                  "Core DB Password": "[parameters('rep_core_sqldatabase_password')]",
+                  "Core Admin Connection String": "[concat('Encrypt=True;TrustServerCertificate=False;Data Source=', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.dbServerFullyQualified.value, ',1433;Initial Catalog=',variables('coreDbNameTidy'),';User Id=', parameters('sqlserver_login'), ';Password=', parameters('sqlserver_password'), ';')]",
+                  "Core Connection String": "[concat('Encrypt=True;TrustServerCertificate=False;Data Source=', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.dbServerFullyQualified.value, ',1433;Initial Catalog=',variables('coreDbNameTidy'),';User Id=', parameters('rep_core_sqldatabase_username'), ';Password=', parameters('rep_core_sqldatabase_password'), ';')]",
+                  "Master DB User Name": "[parameters('rep_master_sqldatabase_username')]",
+                  "Master DB Password": "[parameters('rep_master_sqldatabase_password')]",
+                  "Master Admin Connection String": "[concat('Encrypt=True;TrustServerCertificate=False;Data Source=', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.dbServerFullyQualified.value, ',1433;Initial Catalog=',variables('masterDbNameTidy'),';User Id=', parameters('sqlserver_login'), ';Password=', parameters('sqlserver_password'), ';')]",
+                  "Master Connection String": "[concat('Encrypt=True;TrustServerCertificate=False;Data Source=', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.dbServerFullyQualified.value, ',1433;Initial Catalog=',variables('masterDbNameTidy'),';User Id=', parameters('rep_master_sqldatabase_username'), ';Password=', parameters('rep_master_sqldatabase_password'), ';')]",
+                  "Web DB User Name": "[parameters('rep_web_sqldatabase_username')]",
+                  "Web DB Password": "[parameters('rep_web_sqldatabase_password')]",
+                  "Web Admin Connection String": "[concat('Encrypt=True;TrustServerCertificate=False;Data Source=', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.webDbServerFullyQualified.value, ',1433;Initial Catalog=',variables('webDbNameTidy'),';User Id=', parameters('web_sqlserver_login'), ';Password=', parameters('web_sqlserver_password'), ';')]",
+                  "Web Connection String": "[concat('Encrypt=True;TrustServerCertificate=False;Data Source=', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.webDbServerFullyQualified.value, ',1433;Initial Catalog=',variables('webDbNameTidy'),';User Id=', parameters('rep_web_sqldatabase_username'), ';Password=', parameters('rep_web_sqldatabase_password'), ';')]",
+                  "Reporting DB User Name": "[parameters('rep_reporting_sqldatabase_username')]",
+                  "Reporting DB Password": "[parameters('rep_reporting_sqldatabase_password')]",
+                  "Reporting Admin Connection String": "[concat('Encrypt=True;TrustServerCertificate=False;Data Source=', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.dbServerFullyQualified.value, ',1433;Initial Catalog=',variables('repDbNameTidy'),';User Id=', parameters('sqlserver_login'), ';Password=', parameters('sqlserver_password'), ';')]",
+                  "Reporting Connection String": "[concat('Encrypt=True;TrustServerCertificate=False;Data Source=', reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.dbServerFullyQualified.value, ',1433;Initial Catalog=',variables('repDbNameTidy'),';User Id=', parameters('rep_reporting_sqldatabase_username'), ';Password=', parameters('rep_reporting_sqldatabase_password'), ';')]",
+                  "Reporting Service Api Key": "[parameters('rep_authentication_apikey')]",
+                  "Cloud Search Connection String": "[concat('serviceUrl=https://', variables('searchServiceNameTidy'), '.search.windows.net;apiVersion=', variables('searchPreviewApiVersion'), ';apiKey=', listAdminKeys(resourceId('Microsoft.Search/searchServices', variables('searchServiceNameTidy')), variables('searchApiVersion')).primaryKey)]",
+                  "Analytics Connection String": "[variables('analyticsMongoDbConnStrTidy')]",
+                  "Tracking Live Connection String": "[variables('trackingLiveMongoDbConnStrTidy')]",
+                  "Tracking History Connection String": "[variables('trackingHistoryMongoDbConnStrTidy')]",
+                  "Application Insights Instrumentation Key": "[reference(concat('Microsoft.Resources/deployments/', 'sitecore-infra'), '2015-11-01').outputs.appInsightsInstrumentationKey.value]",
+                  "Application Insights Role": "Reporting",
+                  "KeepAlive Url": "[concat('https://', reference(resourceId('Microsoft.Web/sites', variables('repWebAppNameTidy'))).hostNames[0], '/sitecore/service/keepalive.aspx')]",
+                  "License Xml": "[variables('licenseXml')]"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

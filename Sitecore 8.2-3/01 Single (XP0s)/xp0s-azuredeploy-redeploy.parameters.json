@@ -1,0 +1,17 @@
+﻿{
+  "sitecore_admin_password": {
+    "value": ""
+  },
+  "sqlserver_login": {
+    "value": ""
+  },
+  "sqlserver_password": {
+    "value": ""
+  },
+  "single_msdeploy_packageurl": {
+    "value": ""
+  },
+  "licenseXml": {
+    "value": ""
+  }
+}

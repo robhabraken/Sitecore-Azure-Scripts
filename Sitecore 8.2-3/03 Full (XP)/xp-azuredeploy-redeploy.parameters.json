@@ -1,0 +1,29 @@
+﻿{
+  "sitecore_admin_password": {
+    "value": ""
+  },
+  "rep_authentication_apikey": {
+	"value": ""
+  },
+  "sqlserver_login": {
+    "value": ""
+  },
+  "sqlserver_password": {
+    "value": ""
+  },
+  "cm_msdeploy_packageurl": {
+    "value": ""
+  },
+  "cd_msdeploy_packageurl": {
+    "value": ""
+  },
+  "prc_msdeploy_packageurl": {
+    "value": ""
+  },
+  "rep_msdeploy_packageurl": {
+    "value": ""
+  },
+  "licenseXml": {
+    "value": ""
+  }
+}
