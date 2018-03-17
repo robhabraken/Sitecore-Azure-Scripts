@@ -67,7 +67,7 @@ if ($DeploymentType -eq "infra")
 }
 else {
     # read the contents of your Sitecore license file
-	$licenseFileContent = Get-Content -Raw -Encoding UTF8 -Path "$($PSScriptRoot)\..\data\license.xml" | Out-String;
+	$licenseFileContent = Get-Content -Raw -Encoding UTF8 -Path "$($PSScriptRoot)\..\98 License Files\license.xml" | Out-String;
     $additionalParams.Set_Item('licenseXml', $licenseFileContent);
 }
 

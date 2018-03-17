@@ -1,0 +1,1 @@
+# Please place all (Sitecore) license files and certificates in this folder
