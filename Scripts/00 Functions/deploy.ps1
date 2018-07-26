@@ -76,9 +76,9 @@ else {
 try {
 
     Write-Host "Check if resource group already exists..."
-    $notPresent = Get-AzureRmResourceGroup -Name $RgName -ev notPresent -ea 0;
-
-    if (!$notPresent)
+    $isPresent = Get-AzureRmResourceGroup -Name $RgName -ev notPresent -ea 0;
+    
+    if (!$isPresent)
     {
         if ($DeploymentType -ne "infra")
         {
@@ -103,7 +103,7 @@ try {
         $sitecoreDeploymentOutputAsJson =  ConvertTo-Json $sitecoreDeploymentOutput -Depth 5
         $sitecoreDeploymentOutputAsHashTable = ConvertPSObjectToHashtable $(ConvertFrom-Json $sitecoreDeploymentOutputAsJson)
 
-        New-AzureRmResourceGroupDeployment -Name $deploymentName -ResourceGroupName $RgName -TemplateFile $ArmTemplatePath -TemplateParameterObject $additionalParams -provisioningOutput $sitecoreDeploymentOutputAsHashTable;
+        #  New-AzureRmResourceGroupDeployment -Name $deploymentName -ResourceGroupName $RgName -TemplateFile $ArmTemplatePath -TemplateParameterObject $additionalParams -provisioningOutput $sitecoreDeploymentOutputAsHashTable;
     }
 
     Write-Host "Deployment Complete.";

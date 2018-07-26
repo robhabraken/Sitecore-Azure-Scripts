@@ -19,7 +19,7 @@
     "trackingContactMongoDbConnStrTidy": "[parameters('provisioningOutput').trackingContactMongoDbConnStrTidy.value]",
     "searchServiceNameTidy": "[parameters('provisioningOutput').searchServiceNameTidy.value]",
     "appInsightsNameTidy": "[parameters('provisioningOutput').appInsightsNameTidy.value]",
-    "licenseXml": "[parameters('licenseXml')]"
+    "licenseXml": "[parameters('licenseXml')]" 
   },
   "parameters": {
     "provisioningOutput": {
