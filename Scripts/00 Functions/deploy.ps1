@@ -76,9 +76,9 @@ else {
 try {
 
     Write-Host "Check if resource group already exists..."
-    $notPresent = Get-AzureRmResourceGroup -Name $RgName -ev notPresent -ea 0;
-
-    if (!$notPresent)
+    $isPresent = Get-AzureRmResourceGroup -Name $RgName -ev notPresent -ea 0;
+    
+    if (!$isPresent)
     {
         if ($DeploymentType -ne "infra")
         {
@@ -88,7 +88,7 @@ try {
         New-AzureRmResourceGroup -Name $RgName -Location $location;
     }
 
-        Write-Verbose "Starting ARM deployment...";
+    Write-Verbose "Starting ARM deployment...";
 
     if ($DeploymentType -eq "infra")
     {
