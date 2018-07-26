@@ -88,7 +88,7 @@ try {
         New-AzureRmResourceGroup -Name $RgName -Location $location;
     }
 
-        Write-Verbose "Starting ARM deployment...";
+    Write-Verbose "Starting ARM deployment...";
 
     if ($DeploymentType -eq "infra")
     {
@@ -103,7 +103,7 @@ try {
         $sitecoreDeploymentOutputAsJson =  ConvertTo-Json $sitecoreDeploymentOutput -Depth 5
         $sitecoreDeploymentOutputAsHashTable = ConvertPSObjectToHashtable $(ConvertFrom-Json $sitecoreDeploymentOutputAsJson)
 
-        #  New-AzureRmResourceGroupDeployment -Name $deploymentName -ResourceGroupName $RgName -TemplateFile $ArmTemplatePath -TemplateParameterObject $additionalParams -provisioningOutput $sitecoreDeploymentOutputAsHashTable;
+        New-AzureRmResourceGroupDeployment -Name $deploymentName -ResourceGroupName $RgName -TemplateFile $ArmTemplatePath -TemplateParameterObject $additionalParams -provisioningOutput $sitecoreDeploymentOutputAsHashTable;
     }
 
     Write-Host "Deployment Complete.";
