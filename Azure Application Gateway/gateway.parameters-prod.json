@@ -1,0 +1,49 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "applicationGateways_name": {
+            "value": "subscription-rg-agv2"
+        },
+        "backendAddress_fqdn_cd": {
+            "value": "subscription-rg-cd.azurewebsites.net"
+        },
+        "backendAddress_fqdn_cm": {
+            "value": "subscription-rg-cm.azurewebsites.net"
+        },
+        "backendAddress_fqdn_si": {
+            "value": "subscription-rg-si.azurewebsites.net"
+        },
+        "hostName_cd": {
+            "value": "www.mysite.com"
+        },
+        "hostName_cm": {
+            "value": "cm.mysite.com"
+        },
+        "hostName_si": {
+            "value": "identity.mysite.com"
+        },
+        "ssl_cert_data": {
+            "reference": {
+              "keyVault": {
+                "id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/subscription-rg/providers/Microsoft.KeyVault/vaults/subscription-rg-keyvault"
+              },
+              "secretName": "ssl-cert-data"
+            }
+        },
+        "ssl_cert_password": {
+            "reference": {
+              "keyVault": {
+                "id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/subscription-rg/providers/Microsoft.KeyVault/vaults/subscription-rg-keyvault"
+              },
+              "secretName": "ssl-cert-password"
+            }
+        },
+        "virtualNetworks_vnet_externalid": {
+            "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/subscription-rg/providers/Microsoft.Network/virtualNetworks/subscription-rg-vnet"
+        },
+        "virtualNetworks_subnet_name": {
+            "value": "subnet-agv2"
+        }        
+    }
+}

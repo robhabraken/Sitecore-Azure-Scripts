@@ -1,0 +1,552 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "applicationGateways_name": {
+            "type": "string"
+        },     
+        "backendAddress_fqdn_cd": {
+            "type": "string"
+        },        
+        "backendAddress_fqdn_cm": {
+            "type": "string"
+        },        
+        "backendAddress_fqdn_si": {
+            "type": "string"
+        },        
+        "hostName_cd": {
+            "type": "string"
+        },      
+        "hostName_cm": {
+            "type": "string"
+        },     
+        "hostName_si": {
+            "type": "string"
+        },
+        "ssl_cert_data": {
+            "type": "securestring"
+        },
+        "ssl_cert_password": {
+            "type": "securestring"
+        },
+        "virtualNetworks_vnet_externalid": {
+            "type": "string"
+        },
+        "virtualNetworks_subnet_name": {
+            "type": "string"
+        }        
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2019-06-01",
+            "name": "[concat(parameters('applicationGateways_name'), '-publicip')]",
+            "location": "westeurope",
+            "sku": {
+                "name": "Standard",
+                "tier": "Regional"
+            },
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "32db4c17-4b74-4e7a-85ce-d454339c7219",
+                "ipAddress": "51.105.217.72",
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Static",
+                "idleTimeoutInMinutes": 4,
+                "dnsSettings": {
+                    "domainNameLabel": "[parameters('applicationGateways_name')]",
+                    "fqdn": "[concat(parameters('applicationGateways_name'), '.westeurope.cloudapp.azure.com')]"
+                },
+                "ipTags": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/applicationGateways",
+            "apiVersion": "2019-06-01",
+            "name": "[parameters('applicationGateways_name')]",
+            "location": "westeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', concat(parameters('applicationGateways_name'), '-publicip'))]"
+            ],
+            "zones": [
+                "1",
+                "2",
+                "3"
+            ],
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "27576c4e-654e-4fdb-bc9e-dd393fd72d58",
+                "sku": {
+                    "name": "Standard_v2",
+                    "tier": "Standard_v2"
+                },
+                "gatewayIPConfigurations": [
+                    {
+                        "name": "appGatewayIpConfig",
+                        "etag": "W/\"2de14770-2379-4fe1-b426-d974b1ff586d\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "subnet": {
+                                "id": "[concat(parameters('virtualNetworks_vnet_externalid'), '/subnets/', parameters('virtualNetworks_subnet_name'))]"
+                            }
+                        },
+                        "type": "Microsoft.Network/applicationGateways/gatewayIPConfigurations"
+                    }
+                ],
+                "sslCertificates": [
+                    {
+                        "name": "[concat(parameters('applicationGateways_name'), '-ssl')]",
+                        "etag": "W/\"2de14770-2379-4fe1-b426-d974b1ff586d\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "Data": "[parameters('ssl_cert_data')]",
+                            "password": "[parameters('ssl_cert_password')]"
+                        },
+                        "type": "Microsoft.Network/applicationGateways/sslCertificates"
+                    }
+                ],
+                "trustedRootCertificates": [],
+                "frontendIPConfigurations": [
+                    {
+                        "name": "[concat(parameters('applicationGateways_name'), '-frontendip-public')]",
+                        "etag": "W/\"2de14770-2379-4fe1-b426-d974b1ff586d\"",
+                        "type": "Microsoft.Network/applicationGateways/frontendIPConfigurations",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(parameters('applicationGateways_name'), '-publicip'))]"
+                            }
+                        }
+                    }
+                ],
+                "frontendPorts": [
+                    {
+                        "name": "[concat(parameters('applicationGateways_name'), '-port-https')]",
+                        "etag": "W/\"2de14770-2379-4fe1-b426-d974b1ff586d\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "port": 443
+                        },
+                        "type": "Microsoft.Network/applicationGateways/frontendPorts"
+                    },
+                    {
+                        "name": "[concat(parameters('applicationGateways_name'), '-port-http')]",
+                        "etag": "W/\"2de14770-2379-4fe1-b426-d974b1ff586d\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "port": 80
+                        },
+                        "type": "Microsoft.Network/applicationGateways/frontendPorts"
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "[concat(parameters('applicationGateways_name'), '-backend-cm')]",
+                        "etag": "W/\"2de14770-2379-4fe1-b426-d974b1ff586d\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "backendAddresses": [
+                                {
+                                    "fqdn": "[parameters('backendAddress_fqdn_cm')]"
+                                }
+                            ]
+                        },
+                        "type": "Microsoft.Network/applicationGateways/backendAddressPools"
+                    },
+                    {
+                        "name": "[concat(parameters('applicationGateways_name'), '-backend-cd')]",
+                        "etag": "W/\"2de14770-2379-4fe1-b426-d974b1ff586d\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "backendAddresses": [
+                                {
+                                    "fqdn": "[parameters('backendAddress_fqdn_cd')]"
+                                }
+                            ]
+                        },
+                        "type": "Microsoft.Network/applicationGateways/backendAddressPools"
+                    },
+                    {
+                        "name": "[concat(parameters('applicationGateways_name'), '-backend-si')]",
+                        "etag": "W/\"2de14770-2379-4fe1-b426-d974b1ff586d\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "backendAddresses": [
+                                {
+                                    "fqdn": "[parameters('backendAddress_fqdn_si')]"
+                                }
+                            ]
+                        },
+                        "type": "Microsoft.Network/applicationGateways/backendAddressPools"
+                    }
+                ],
+                "backendHttpSettingsCollection": [
+                    {
+                        "name": "[concat(parameters('applicationGateways_name'), '-https-cd')]",
+                        "etag": "W/\"2de14770-2379-4fe1-b426-d974b1ff586d\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "port": 80,
+                            "protocol": "Http",
+                            "cookieBasedAffinity": "Disabled",
+                            "hostName": "[parameters('hostName_cd')]",
+                            "pickHostNameFromBackendAddress": false,
+                            "affinityCookieName": "ApplicationGatewayAffinity",
+                            "requestTimeout": 60,
+                            "probe": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/probes/', parameters('applicationGateways_name'), '-hp-cd-http'))]"
+                            }
+                        },
+                        "type": "Microsoft.Network/applicationGateways/backendHttpSettingsCollection"
+                    },
+                    {
+                        "name": "[concat(parameters('applicationGateways_name'), '-https-cm')]",
+                        "etag": "W/\"2de14770-2379-4fe1-b426-d974b1ff586d\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "port": 80,
+                            "protocol": "Http",
+                            "cookieBasedAffinity": "Disabled",
+                            "hostName": "[parameters('hostName_cm')]",
+                            "pickHostNameFromBackendAddress": false,
+                            "affinityCookieName": "ApplicationGatewayAffinity",
+                            "requestTimeout": 120,
+                            "probe": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/probes/', parameters('applicationGateways_name'), '-hp-cm-http'))]"
+                            }
+                        },
+                        "type": "Microsoft.Network/applicationGateways/backendHttpSettingsCollection"
+                    },
+                    {
+                        "name": "[concat(parameters('applicationGateways_name'), '-https-si')]",
+                        "etag": "W/\"2de14770-2379-4fe1-b426-d974b1ff586d\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "port": 80,
+                            "protocol": "Http",
+                            "cookieBasedAffinity": "Disabled",
+                            "hostName": "[parameters('hostName_si')]",
+                            "pickHostNameFromBackendAddress": false,
+                            "affinityCookieName": "ApplicationGatewayAffinity",
+                            "requestTimeout": 30,
+                            "probe": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/probes/', parameters('applicationGateways_name'), '-hp-si-http'))]"
+                            }
+                        },
+                        "type": "Microsoft.Network/applicationGateways/backendHttpSettingsCollection"
+                    }
+                ],
+                "httpListeners": [
+                    {
+                        "name": "[concat(parameters('applicationGateways_name'), '-listener-cm-https')]",
+                        "etag": "W/\"2de14770-2379-4fe1-b426-d974b1ff586d\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/frontendIPConfigurations/', parameters('applicationGateways_name'), '-frontendip-public'))]"
+                            },
+                            "frontendPort": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/frontendPorts/', parameters('applicationGateways_name'), '-port-https'))]"
+                            },
+                            "protocol": "Https",
+                            "sslCertificate": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/sslCertificates/', parameters('applicationGateways_name'), '-ssl'))]"
+                            },
+                            "hostName": "[parameters('hostName_cm')]",
+                            "requireServerNameIndication": true
+                        },
+                        "type": "Microsoft.Network/applicationGateways/httpListeners"
+                    },
+                    {
+                        "name": "[concat(parameters('applicationGateways_name'), '-listener-cd-https')]",
+                        "etag": "W/\"2de14770-2379-4fe1-b426-d974b1ff586d\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/frontendIPConfigurations/', parameters('applicationGateways_name'), '-frontendip-public'))]"
+                            },
+                            "frontendPort": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/frontendPorts/', parameters('applicationGateways_name'), '-port-https'))]"
+                            },
+                            "protocol": "Https",
+                            "sslCertificate": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/sslCertificates/', parameters('applicationGateways_name'), '-ssl'))]"
+                            },
+                            "hostName": "[parameters('hostName_cd')]",
+                            "requireServerNameIndication": true
+                        },
+                        "type": "Microsoft.Network/applicationGateways/httpListeners"
+                    },
+                    {
+                        "name": "[concat(parameters('applicationGateways_name'), '-listener-cd-http')]",
+                        "etag": "W/\"2de14770-2379-4fe1-b426-d974b1ff586d\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/frontendIPConfigurations/', parameters('applicationGateways_name'), '-frontendip-public'))]"
+                            },
+                            "frontendPort": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/frontendPorts/', parameters('applicationGateways_name'), '-port-http'))]"
+                            },
+                            "protocol": "Http",
+                            "hostName": "[parameters('hostName_cd')]",
+                            "requireServerNameIndication": false
+                        },
+                        "type": "Microsoft.Network/applicationGateways/httpListeners"
+                    },
+                    {
+                        "name": "[concat(parameters('applicationGateways_name'), '-listener-cm-http')]",
+                        "etag": "W/\"2de14770-2379-4fe1-b426-d974b1ff586d\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/frontendIPConfigurations/', parameters('applicationGateways_name'), '-frontendip-public'))]"
+                            },
+                            "frontendPort": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/frontendPorts/', parameters('applicationGateways_name'), '-port-http'))]"
+                            },
+                            "protocol": "Http",
+                            "hostName": "[parameters('hostName_cm')]",
+                            "requireServerNameIndication": false
+                        },
+                        "type": "Microsoft.Network/applicationGateways/httpListeners"
+                    },
+                    {
+                        "name": "[concat(parameters('applicationGateways_name'), '-listener-si-https')]",
+                        "etag": "W/\"2de14770-2379-4fe1-b426-d974b1ff586d\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/frontendIPConfigurations/', parameters('applicationGateways_name'), '-frontendip-public'))]"
+                            },
+                            "frontendPort": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/frontendPorts/', parameters('applicationGateways_name'), '-port-https'))]"
+                            },
+                            "protocol": "Https",
+                            "sslCertificate": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/sslCertificates/', parameters('applicationGateways_name'), '-ssl'))]"
+                            },
+                            "hostName": "[parameters('hostName_si')]",
+                            "requireServerNameIndication": true
+                        },
+                        "type": "Microsoft.Network/applicationGateways/httpListeners"
+                    }
+                ],
+                "urlPathMaps": [],
+                "requestRoutingRules": [
+                    {
+                        "name": "[concat(parameters('applicationGateways_name'), '-rule-cm-https')]",
+                        "etag": "W/\"2de14770-2379-4fe1-b426-d974b1ff586d\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "ruleType": "Basic",
+                            "httpListener": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/httpListeners/', parameters('applicationGateways_name'), '-listener-cm-https'))]"
+                            },
+                            "backendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/backendAddressPools/', parameters('applicationGateways_name'), '-backend-cm'))]"
+                            },
+                            "backendHttpSettings": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/backendHttpSettingsCollection/', parameters('applicationGateways_name'), '-https-cm'))]"
+                            }
+                        },
+                        "type": "Microsoft.Network/applicationGateways/requestRoutingRules"
+                    },
+                    {
+                        "name": "[concat(parameters('applicationGateways_name'), '-rule-cd-https')]",
+                        "etag": "W/\"2de14770-2379-4fe1-b426-d974b1ff586d\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "ruleType": "Basic",
+                            "httpListener": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/httpListeners/', parameters('applicationGateways_name'), '-listener-cd-https'))]"
+                            },
+                            "backendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/backendAddressPools/', parameters('applicationGateways_name'), '-backend-cd'))]"
+                            },
+                            "backendHttpSettings": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/backendHttpSettingsCollection/', parameters('applicationGateways_name'), '-https-cd'))]"
+                            }
+                        },
+                        "type": "Microsoft.Network/applicationGateways/requestRoutingRules"
+                    },
+                    {
+                        "name": "[concat(parameters('applicationGateways_name'), '-rule-cm-http')]",
+                        "etag": "W/\"2de14770-2379-4fe1-b426-d974b1ff586d\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "ruleType": "Basic",
+                            "httpListener": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/httpListeners/', parameters('applicationGateways_name'), '-listener-cm-http'))]"
+                            },
+                            "redirectConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/redirectConfigurations/', parameters('applicationGateways_name'), '-rule-cm-http'))]"
+                            }
+                        },
+                        "type": "Microsoft.Network/applicationGateways/requestRoutingRules"
+                    },
+                    {
+                        "name": "[concat(parameters('applicationGateways_name'), '-rule-cd-http')]",
+                        "etag": "W/\"2de14770-2379-4fe1-b426-d974b1ff586d\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "ruleType": "Basic",
+                            "httpListener": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/httpListeners/', parameters('applicationGateways_name'), '-listener-cd-http'))]"
+                            },
+                            "redirectConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/redirectConfigurations/', parameters('applicationGateways_name'), '-rule-cd-http'))]"
+                            }
+                        },
+                        "type": "Microsoft.Network/applicationGateways/requestRoutingRules"
+                    },
+                    {
+                        "name": "[concat(parameters('applicationGateways_name'), '-rule-si-https')]",
+                        "etag": "W/\"2de14770-2379-4fe1-b426-d974b1ff586d\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "ruleType": "Basic",
+                            "httpListener": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/httpListeners/', parameters('applicationGateways_name'), '-listener-si-https'))]"
+                            },
+                            "backendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/backendAddressPools/', parameters('applicationGateways_name'), '-backend-si'))]"
+                            },
+                            "backendHttpSettings": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/backendHttpSettingsCollection/', parameters('applicationGateways_name'), '-https-si'))]"
+                            }
+                        },
+                        "type": "Microsoft.Network/applicationGateways/requestRoutingRules"
+                    }
+                ],
+                "probes": [
+                    {
+                        "name": "[concat(parameters('applicationGateways_name'), '-hp-cd-http')]",
+                        "etag": "W/\"2de14770-2379-4fe1-b426-d974b1ff586d\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "protocol": "Http",
+                            "host": "[parameters('hostName_cd')]",
+                            "path": "/",
+                            "interval": 30,
+                            "timeout": 30,
+                            "unhealthyThreshold": 3,
+                            "pickHostNameFromBackendHttpSettings": false,
+                            "minServers": 0,
+                            "match": {
+                                "statusCodes": [
+                                    "200-399"
+                                ]
+                            }
+                        },
+                        "type": "Microsoft.Network/applicationGateways/probes"
+                    },
+                    {
+                        "name": "[concat(parameters('applicationGateways_name'), '-hp-cm-http')]",
+                        "etag": "W/\"2de14770-2379-4fe1-b426-d974b1ff586d\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "protocol": "Http",
+                            "host": "[parameters('hostName_cm')]",
+                            "path": "/",
+                            "interval": 30,
+                            "timeout": 30,
+                            "unhealthyThreshold": 3,
+                            "pickHostNameFromBackendHttpSettings": false,
+                            "minServers": 0,
+                            "match": {
+                                "statusCodes": [
+                                    "200-399"
+                                ]
+                            }
+                        },
+                        "type": "Microsoft.Network/applicationGateways/probes"
+                    },
+                    {
+                        "name": "[concat(parameters('applicationGateways_name'), '-hp-si-http')]",
+                        "etag": "W/\"2de14770-2379-4fe1-b426-d974b1ff586d\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "protocol": "Http",
+                            "host": "[parameters('hostName_si')]",
+                            "path": "/",
+                            "interval": 30,
+                            "timeout": 30,
+                            "unhealthyThreshold": 3,
+                            "pickHostNameFromBackendHttpSettings": false,
+                            "minServers": 0,
+                            "match": {
+                                "statusCodes": [
+                                    "200-399"
+                                ]
+                            }
+                        },
+                        "type": "Microsoft.Network/applicationGateways/probes"
+                    }
+                ],
+                "rewriteRuleSets": [],
+                "redirectConfigurations": [
+                    {
+                        "name": "[concat(parameters('applicationGateways_name'), '-rule-cm-http')]",
+                        "etag": "W/\"2de14770-2379-4fe1-b426-d974b1ff586d\"",
+                        "properties": {
+                            "redirectType": "Permanent",
+                            "targetListener": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/httpListeners/', parameters('applicationGateways_name'), '-listener-cm-https'))]"
+                            },
+                            "includePath": true,
+                            "includeQueryString": true,
+                            "requestRoutingRules": [
+                                {
+                                    "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/requestRoutingRules/', parameters('applicationGateways_name'), '-rule-cm-http'))]"
+                                }
+                            ]
+                        },
+                        "type": "Microsoft.Network/applicationGateways/redirectConfigurations"
+                    },
+                    {
+                        "name": "[concat(parameters('applicationGateways_name'), '-rule-cd-http')]",
+                        "etag": "W/\"2de14770-2379-4fe1-b426-d974b1ff586d\"",
+                        "properties": {
+                            "redirectType": "Permanent",
+                            "targetListener": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/httpListeners/', parameters('applicationGateways_name'), '-listener-cd-https'))]"
+                            },
+                            "includePath": true,
+                            "includeQueryString": true,
+                            "requestRoutingRules": [
+                                {
+                                    "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), concat('/requestRoutingRules/', parameters('applicationGateways_name'), '-rule-cd-http'))]"
+                                }
+                            ]
+                        },
+                        "type": "Microsoft.Network/applicationGateways/redirectConfigurations"
+                    }
+                ],
+                "sslPolicy": {
+                    "policyType": "Custom",
+                    "minProtocolVersion": "TLSv1_2",
+                    "cipherSuites": [
+                        "TLS_DHE_RSA_WITH_AES_128_GCM_SHA256",
+                        "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
+                        "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+                        "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384",
+                        "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256",
+                        "TLS_DHE_RSA_WITH_AES_256_GCM_SHA384",
+                        "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
+                        "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
+                        "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384",
+                        "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256"
+                    ]
+                },
+                "enableHttp2": true,
+                "autoscaleConfiguration": {
+                    "minCapacity": 2,
+                    "maxCapacity": 10
+                }
+            }
+        }
+    ]
+}
