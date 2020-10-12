@@ -1,0 +1,131 @@
+﻿{
+  "deploymentId": {
+    "value": ""
+  },
+  "location": {
+    "value": ""
+  },
+  "sitecoreAdminPassword": {
+    "reference": {
+      "keyVault": {
+        "id": ""
+      },
+      "secretName": ""
+    }
+  },
+  "licenseXml": {
+    "value": ""
+  },
+  "repAuthenticationApiKey": {
+    "reference": {
+      "keyVault": {
+        "id": ""
+      },
+      "secretName": ""
+    }
+  },
+  "sqlServerLogin": {
+    "reference": {
+      "keyVault": {
+        "id": ""
+      },
+      "secretName": ""
+    }
+  },
+  "sqlServerPassword": {
+    "reference": {
+      "keyVault": {
+        "id": ""
+      },
+      "secretName": ""
+    }
+  },
+  "siMsDeployPackageUrl": {
+    "value": ""
+  },
+  "cmMsDeployPackageUrl": {
+    "value": ""
+  },
+  "cdMsDeployPackageUrl": {
+    "value": ""
+  },
+  "prcMsDeployPackageUrl": {
+    "value": ""
+  },
+  "repMsDeployPackageUrl": {
+    "value": ""
+  },
+  "xcRefDataMsDeployPackageUrl": {
+    "value": ""
+  },
+  "xcCollectMsDeployPackageUrl": {
+    "value": ""
+  },
+  "xcSearchMsDeployPackageUrl": {
+    "value": ""
+  },
+  "cortexProcessingMsDeployPackageUrl": {
+    "value": ""
+  },
+  "cortexReportingMsDeployPackageUrl": {
+    "value": ""
+  },
+  "maOpsMsDeployPackageUrl": {
+    "value": ""
+  },
+  "maRepMsDeployPackageUrl": {
+    "value": ""
+  },
+  "authCertificateBlob": {
+    "reference": {
+      "keyVault": {
+        "id": ""
+      },
+      "secretName": ""
+    }
+  },
+  "authCertificatePassword": {
+    "reference": {
+      "keyVault": {
+        "id": ""
+      },
+      "secretName": ""
+    }
+  },
+  "machineLearningServerConnectionString": {
+    "value": ""
+  },
+  "machineLearningServerBlobEndpointCertificatePath": {
+    "value": ""
+  },
+  "machineLearningServerBlobEndpointCertificatePassword": {
+    "value": ""
+  },
+  "machineLearningServerTableEndpointCertificatePath": {
+    "value": ""
+  },
+  "machineLearningServerTableEndpointCertificatePassword": {
+    "value": ""
+  },
+  "machineLearningServerEndpointCertificationAuthorityCertificatePath": {
+    "value": ""
+  },
+  "solrConnectionString": {
+    "value": ""
+  },
+  "environmentType": {
+    "value": "Production"
+  },
+  "sitecoreSKU": {
+    "value": "Large"
+  },
+  "cmNodeJsVersion": {
+    "value": "12.18.0"
+  },
+  "cdNodeJsVersion": {
+    "value": "12.18.0"
+  },
+  "reactAppScApiHost": {
+    "value": "/"
+  }
+}

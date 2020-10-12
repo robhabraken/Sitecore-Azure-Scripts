@@ -1,0 +1,82 @@
+{
+  "deploymentId": {
+    "value": ""
+  },
+  "sitecoreAdminPassword": {
+    "reference": {
+      "keyVault": {
+        "id": ""
+      },
+      "secretName": ""
+    }
+  },
+  "licenseXml": {
+    "value": ""
+  },
+  "sqlServerLogin": {
+    "reference": {
+      "keyVault": {
+        "id": ""
+      },
+      "secretName": ""
+    }
+  },
+  "sqlServerPassword": {
+    "reference": {
+      "keyVault": {
+        "id": ""
+      },
+      "secretName": ""
+    }
+  },
+  "siMsDeployPackageUrl": {
+    "value": ""
+  },
+  "singleMsDeployPackageUrl": {
+    "value": ""
+  },
+  "xcSingleMsDeployPackageUrl": {
+    "value": ""
+  },
+  "authCertificateBlob": {
+    "reference": {
+      "keyVault": {
+        "id": ""
+      },
+      "secretName": ""
+    }
+  },
+  "authCertificatePassword": {
+    "reference": {
+      "keyVault": {
+        "id": ""
+      },
+      "secretName": ""
+    }
+  },
+  "allowInvalidClientCertificates": {
+    "value": true
+  },
+  "xcServerConfigurationEnvironment": { "value": "Development" },
+  "applicationInsightsDataVolumeCap": { "value": "2" },
+  "singleHostingPlanSkuName": { "value": "S3" },
+  "xcSingleHostingPlanSkuName": { "value": "S2" },
+  "machineLearningServerConnectionString": {
+    "value": ""
+  },
+  "machineLearningServerBlobEndpointCertificatePath": {
+    "value": ""
+  },
+  "machineLearningServerBlobEndpointCertificatePassword": {
+    "value": ""
+  },
+  "machineLearningServerTableEndpointCertificatePath": {
+    "value": ""
+  },
+  "machineLearningServerTableEndpointCertificatePassword": {
+    "value": ""
+  },
+  "machineLearningServerEndpointCertificationAuthorityCertificatePath": {
+    "value": ""
+  }
+}

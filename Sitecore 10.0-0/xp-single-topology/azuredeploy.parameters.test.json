@@ -1,0 +1,93 @@
+{
+  "deploymentId": {
+    "value": ""
+  },
+  "location": {
+    "value": ""
+  },
+  "sitecoreAdminPassword": {
+    "reference": {
+      "keyVault": {
+        "id": ""
+      },
+      "secretName": ""
+    }
+  },
+  "licenseXml": {
+    "value": ""
+  },
+  "sqlServerLogin": {
+    "reference": {
+      "keyVault": {
+        "id": ""
+      },
+      "secretName": ""
+    }
+  },
+  "sqlServerPassword": {
+    "reference": {
+      "keyVault": {
+        "id": ""
+      },
+      "secretName": ""
+    }
+  },
+  "siMsDeployPackageUrl": {
+    "value": ""
+  },
+  "singleMsDeployPackageUrl": {
+    "value": ""
+  },
+  "xcSingleMsDeployPackageUrl": {
+    "value": ""
+  },
+  "jssMsDeployPackageUrl": {
+    "value": ""
+  },
+  "authCertificateBlob": {
+    "reference": {
+      "keyVault": {
+        "id": ""
+      },
+      "secretName": ""
+    }
+  },
+  "authCertificatePassword": {
+    "reference": {
+      "keyVault": {
+        "id": ""
+      },
+      "secretName": ""
+    }
+  },
+  "machineLearningServerConnectionString": {
+    "value": ""
+  },
+  "machineLearningServerBlobEndpointCertificatePath": {
+    "value": ""
+  },
+  "machineLearningServerBlobEndpointCertificatePassword": {
+    "value": ""
+  },
+  "machineLearningServerTableEndpointCertificatePath": {
+    "value": ""
+  },
+  "machineLearningServerTableEndpointCertificatePassword": {
+    "value": ""
+  },
+  "machineLearningServerEndpointCertificationAuthorityCertificatePath": {
+    "value": ""
+  },
+  "solrConnectionString": {
+    "value": ""
+  },
+  "xcServerConfigurationEnvironment": {
+    "value": "Development"
+  },
+  "nodeJsVersion": {
+    "value": "12.18.0"
+  },
+  "reactAppScApiHost": {
+    "value": "/"
+  }
+}
