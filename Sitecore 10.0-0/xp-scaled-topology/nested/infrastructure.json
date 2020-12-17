@@ -981,6 +981,109 @@
       "tags": {
         "provider": "[variables('sitecoreTags').provider]",
         "logicalName": "[variables('sitecoreTags').si]"
+      }
+    },
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "name": "[variables('cmHostingPlanNameTidy')]",
+      "apiVersion": "[variables('serverFarmApiVersion')]",
+      "sku": {
+        "name": "[if(not(variables('useAse')), parameters('resourceSizes').cmHostingPlan.SkuName, parameters('resourceSizes').cmHostingPlanIsolated.SkuName)]",
+        "capacity": "[if(not(variables('useAse')), parameters('resourceSizes').cmHostingPlan.SkuCapacity, parameters('resourceSizes').cmHostingPlanIsolated.SkuCapacity)]"
+      },
+      "properties": "[if(not(variables('useAse')), variables('hostingPlanProperties').cmProperties, variables('hostingPlanProperties').cmPropertiesWithASE)]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "provider": "[variables('sitecoreTags').provider]",
+        "logicalName": "[variables('sitecoreTags').cm]"
+      },
+      "dependsOn": [ 
+        "[resourceId('Microsoft.Web/serverfarms', variables('siHostingPlanNameTidy'))]" 
+      ]
+    },
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "name": "[variables('cdHostingPlanNameTidy')]",
+      "apiVersion": "[variables('serverFarmApiVersion')]",
+      "sku": {
+        "name": "[if(not(variables('useAse')), parameters('resourceSizes').cdHostingPlan.SkuName, parameters('resourceSizes').cdHostingPlanIsolated.SkuName)]",
+        "capacity": "[if(not(variables('useAse')), parameters('resourceSizes').cdHostingPlan.SkuCapacity, parameters('resourceSizes').cdHostingPlanIsolated.SkuCapacity)]"
+      },
+      "properties": "[if(not(variables('useAse')), variables('hostingPlanProperties').cdProperties, variables('hostingPlanProperties').cdPropertiesWithASE)]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "provider": "[variables('sitecoreTags').provider]",
+        "logicalName": "[variables('sitecoreTags').cd]"
+      },
+      "dependsOn": [ 
+        "[resourceId('Microsoft.Web/serverfarms', variables('cmHostingPlanNameTidy'))]" 
+      ]
+    },
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "name": "[variables('prcHostingPlanNameTidy')]",
+      "apiVersion": "[variables('serverFarmApiVersion')]",
+      "sku": {
+        "name": "[if(not(variables('useAse')), parameters('resourceSizes').prcHostingPlan.SkuName, parameters('resourceSizes').prcHostingPlanIsolated.SkuName)]",
+        "capacity": "[if(not(variables('useAse')), parameters('resourceSizes').prcHostingPlan.SkuCapacity, parameters('resourceSizes').prcHostingPlanIsolated.SkuCapacity)]"
+      },
+      "properties": "[if(not(variables('useAse')), variables('hostingPlanProperties').prcProperties, variables('hostingPlanProperties').prcPropertiesWithASE)]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "provider": "[variables('sitecoreTags').provider]",
+        "logicalName": "[variables('sitecoreTags').prc]"
+      },
+      "dependsOn": [ 
+        "[resourceId('Microsoft.Web/serverfarms', variables('cdHostingPlanNameTidy'))]" 
+      ]
+    },
+    {
+        "type": "Microsoft.Web/serverfarms",
+        "name": "[variables('repHostingPlanNameTidy')]",
+        "condition": "[parameters('useDedicatedHostingPlanForReporting')]",
+        "apiVersion": "[variables('serverFarmApiVersion')]",
+        "sku": {
+            "name": "[if(not(variables('useAse')), parameters('resourceSizes').repHostingPlan.SkuName, parameters('resourceSizes').repHostingPlanIsolated.SkuName)]",
+            "capacity": "[if(not(variables('useAse')), parameters('resourceSizes').repHostingPlan.SkuCapacity, parameters('resourceSizes').repHostingPlanIsolated.SkuCapacity)]"
+        },
+        "properties": "[if(not(variables('useAse')), variables('hostingPlanProperties').repProperties, variables('hostingPlanProperties').repPropertiesWithASE)]",
+        "location": "[parameters('location')]",
+        "tags": {
+            "provider": "[variables('sitecoreTags').provider]",
+            "logicalName": "[variables('sitecoreTags').rep]"
+        },
+        "dependsOn": [
+            "[resourceId('Microsoft.Web/serverfarms', variables('prcHostingPlanNameTidy'))]"
+        ]
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "name": "[variables('siWebAppNameTidy')]",
+      "location": "[parameters('location')]",
+      "apiVersion": "[variables('webApiVersion')]",
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('siHostingPlanNameTidy'))]",
+        "siteConfig": {
+          "use32BitWorkerProcess": false,
+          "alwaysOn": true,
+          "phpVersion": "",
+          "defaultDocuments": [
+            "index.html"
+          ],
+          "metadata": [
+            {
+              "name": "CURRENT_STACK",
+              "value": "dotnetcore"
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('siHostingPlanNameTidy'))]"
+      ],
+      "tags": {
+        "provider": "[variables('sitecoreTags').provider]",
+        "logicalName": "[variables('sitecoreTags').si]"
       },
       "resources": [
         {
@@ -1026,15 +1129,24 @@
       ]
     },
     {
-      "type": "Microsoft.Web/serverfarms",
-      "name": "[variables('cmHostingPlanNameTidy')]",
-      "apiVersion": "[variables('serverFarmApiVersion')]",
-      "sku": {
-        "name": "[if(not(variables('useAse')), parameters('resourceSizes').cmHostingPlan.SkuName, parameters('resourceSizes').cmHostingPlanIsolated.SkuName)]",
-        "capacity": "[if(not(variables('useAse')), parameters('resourceSizes').cmHostingPlan.SkuCapacity, parameters('resourceSizes').cmHostingPlanIsolated.SkuCapacity)]"
+      "type": "Microsoft.Web/sites",
+      "name": "[variables('cmWebAppNameTidy')]",
+      "apiVersion": "[variables('webApiVersion')]",
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('cmHostingPlanNameTidy'))]",
+        "siteConfig": {
+          "use32BitWorkerProcess": false,
+          "alwaysOn": true,
+          "phpVersion": "",
+          "defaultDocuments": [
+            "index.html"
+          ]
+        }
       },
-      "properties": "[if(not(variables('useAse')), variables('hostingPlanProperties').cmProperties, variables('hostingPlanProperties').cmPropertiesWithASE)]",
       "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('cmHostingPlanNameTidy'))]"
+      ],
       "tags": {
         "provider": "[variables('sitecoreTags').provider]",
         "logicalName": "[variables('sitecoreTags').cm]"
@@ -1074,21 +1186,27 @@
             }
           ]
         }
-      ],
-      "dependsOn": [ 
-        "[resourceId('Microsoft.Web/serverfarms', variables('siHostingPlanNameTidy'))]" 
       ]
     },
     {
-      "type": "Microsoft.Web/serverfarms",
-      "name": "[variables('cdHostingPlanNameTidy')]",
-      "apiVersion": "[variables('serverFarmApiVersion')]",
-      "sku": {
-        "name": "[if(not(variables('useAse')), parameters('resourceSizes').cdHostingPlan.SkuName, parameters('resourceSizes').cdHostingPlanIsolated.SkuName)]",
-        "capacity": "[if(not(variables('useAse')), parameters('resourceSizes').cdHostingPlan.SkuCapacity, parameters('resourceSizes').cdHostingPlanIsolated.SkuCapacity)]"
+      "type": "Microsoft.Web/sites",
+      "name": "[variables('cdWebAppNameTidy')]",
+      "apiVersion": "[variables('webApiVersion')]",
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('cdHostingPlanNameTidy'))]",
+        "siteConfig": {
+          "use32BitWorkerProcess": false,
+          "alwaysOn": true,
+          "phpVersion": "",
+          "defaultDocuments": [
+            "index.html"
+          ]
+        }
       },
-      "properties": "[if(not(variables('useAse')), variables('hostingPlanProperties').cdProperties, variables('hostingPlanProperties').cdPropertiesWithASE)]",
       "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('cdHostingPlanNameTidy'))]"
+      ],
       "tags": {
         "provider": "[variables('sitecoreTags').provider]",
         "logicalName": "[variables('sitecoreTags').cd]"
@@ -1128,21 +1246,27 @@
             }
           ]
         }
-      ],
-      "dependsOn": [ 
-        "[resourceId('Microsoft.Web/serverfarms', variables('cmHostingPlanNameTidy'))]" 
       ]
     },
     {
-      "type": "Microsoft.Web/serverfarms",
-      "name": "[variables('prcHostingPlanNameTidy')]",
-      "apiVersion": "[variables('serverFarmApiVersion')]",
-      "sku": {
-        "name": "[if(not(variables('useAse')), parameters('resourceSizes').prcHostingPlan.SkuName, parameters('resourceSizes').prcHostingPlanIsolated.SkuName)]",
-        "capacity": "[if(not(variables('useAse')), parameters('resourceSizes').prcHostingPlan.SkuCapacity, parameters('resourceSizes').prcHostingPlanIsolated.SkuCapacity)]"
+      "type": "Microsoft.Web/sites",
+      "name": "[variables('prcWebAppNameTidy')]",
+      "apiVersion": "[variables('webApiVersion')]",
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('prcHostingPlanNameTidy'))]",
+        "siteConfig": {
+          "use32BitWorkerProcess": false,
+          "alwaysOn": true,
+          "phpVersion": "",
+          "defaultDocuments": [
+            "index.html"
+          ]
+        }
       },
-      "properties": "[if(not(variables('useAse')), variables('hostingPlanProperties').prcProperties, variables('hostingPlanProperties').prcPropertiesWithASE)]",
       "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('prcHostingPlanNameTidy'))]"
+      ],
       "tags": {
         "provider": "[variables('sitecoreTags').provider]",
         "logicalName": "[variables('sitecoreTags').prc]"
@@ -1182,25 +1306,30 @@
             }
           ]
         }
-      ],
-      "dependsOn": [ 
-        "[resourceId('Microsoft.Web/serverfarms', variables('cdHostingPlanNameTidy'))]" 
       ]
     },
     {
-        "type": "Microsoft.Web/serverfarms",
-        "name": "[variables('repHostingPlanNameTidy')]",
-        "condition": "[parameters('useDedicatedHostingPlanForReporting')]",
-        "apiVersion": "[variables('serverFarmApiVersion')]",
-        "sku": {
-            "name": "[if(not(variables('useAse')), parameters('resourceSizes').repHostingPlan.SkuName, parameters('resourceSizes').repHostingPlanIsolated.SkuName)]",
-            "capacity": "[if(not(variables('useAse')), parameters('resourceSizes').repHostingPlan.SkuCapacity, parameters('resourceSizes').repHostingPlanIsolated.SkuCapacity)]"
-        },
-        "properties": "[if(not(variables('useAse')), variables('hostingPlanProperties').repProperties, variables('hostingPlanProperties').repPropertiesWithASE)]",
-        "location": "[parameters('location')]",
-        "tags": {
-            "provider": "[variables('sitecoreTags').provider]",
-            "logicalName": "[variables('sitecoreTags').rep]"
+      "type": "Microsoft.Web/sites",
+      "name": "[variables('repWebAppNameTidy')]",
+      "apiVersion": "[variables('webApiVersion')]",
+      "properties": {
+        "serverFarmId": "[if(parameters('useDedicatedHostingPlanForReporting'), resourceId('Microsoft.Web/serverfarms', variables('repHostingPlanNameTidy')), resourceId('Microsoft.Web/serverfarms', variables('cmHostingPlanNameTidy')))]",
+        "siteConfig": {
+          "use32BitWorkerProcess": false,
+          "alwaysOn": true,
+          "phpVersion": "",
+          "defaultDocuments": [
+            "index.html"
+          ]
+        }
+      },
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('repHostingPlanNameTidy'))]"
+      ],
+      "tags": {
+        "provider": "[variables('sitecoreTags').provider]",
+        "logicalName": "[variables('sitecoreTags').rep]"
       },
       "resources": [
         {
@@ -1237,136 +1366,7 @@
             }
           ]
         }
-      ],
-        "dependsOn": [
-            "[resourceId('Microsoft.Web/serverfarms', variables('prcHostingPlanNameTidy'))]"
-        ]
-    },
-    {
-      "type": "Microsoft.Web/sites",
-      "name": "[variables('siWebAppNameTidy')]",
-      "location": "[parameters('location')]",
-      "apiVersion": "[variables('webApiVersion')]",
-      "properties": {
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('siHostingPlanNameTidy'))]",
-        "siteConfig": {
-          "use32BitWorkerProcess": false,
-          "alwaysOn": true,
-          "phpVersion": "",
-          "defaultDocuments": [
-            "index.html"
-          ],
-          "metadata": [
-            {
-              "name": "CURRENT_STACK",
-              "value": "dotnetcore"
-            }
-          ]
-        }
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', variables('siHostingPlanNameTidy'))]"
-      ],
-      "tags": {
-        "provider": "[variables('sitecoreTags').provider]",
-        "logicalName": "[variables('sitecoreTags').si]"
-      }
-    },
-    {
-      "type": "Microsoft.Web/sites",
-      "name": "[variables('cmWebAppNameTidy')]",
-      "apiVersion": "[variables('webApiVersion')]",
-      "properties": {
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('cmHostingPlanNameTidy'))]",
-        "siteConfig": {
-          "use32BitWorkerProcess": false,
-          "alwaysOn": true,
-          "phpVersion": "",
-          "defaultDocuments": [
-            "index.html"
-          ]
-        }
-      },
-      "location": "[parameters('location')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', variables('cmHostingPlanNameTidy'))]"
-      ],
-      "tags": {
-        "provider": "[variables('sitecoreTags').provider]",
-        "logicalName": "[variables('sitecoreTags').cm]"
-      }
-    },
-    {
-      "type": "Microsoft.Web/sites",
-      "name": "[variables('cdWebAppNameTidy')]",
-      "apiVersion": "[variables('webApiVersion')]",
-      "properties": {
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('cdHostingPlanNameTidy'))]",
-        "siteConfig": {
-          "use32BitWorkerProcess": false,
-          "alwaysOn": true,
-          "phpVersion": "",
-          "defaultDocuments": [
-            "index.html"
-          ]
-        }
-      },
-      "location": "[parameters('location')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', variables('cdHostingPlanNameTidy'))]"
-      ],
-      "tags": {
-        "provider": "[variables('sitecoreTags').provider]",
-        "logicalName": "[variables('sitecoreTags').cd]"
-      }
-    },
-    {
-      "type": "Microsoft.Web/sites",
-      "name": "[variables('prcWebAppNameTidy')]",
-      "apiVersion": "[variables('webApiVersion')]",
-      "properties": {
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('prcHostingPlanNameTidy'))]",
-        "siteConfig": {
-          "use32BitWorkerProcess": false,
-          "alwaysOn": true,
-          "phpVersion": "",
-          "defaultDocuments": [
-            "index.html"
-          ]
-        }
-      },
-      "location": "[parameters('location')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', variables('prcHostingPlanNameTidy'))]"
-      ],
-      "tags": {
-        "provider": "[variables('sitecoreTags').provider]",
-        "logicalName": "[variables('sitecoreTags').prc]"
-      }
-    },
-    {
-      "type": "Microsoft.Web/sites",
-      "name": "[variables('repWebAppNameTidy')]",
-      "apiVersion": "[variables('webApiVersion')]",
-      "properties": {
-        "serverFarmId": "[if(parameters('useDedicatedHostingPlanForReporting'), resourceId('Microsoft.Web/serverfarms', variables('repHostingPlanNameTidy')), resourceId('Microsoft.Web/serverfarms', variables('cmHostingPlanNameTidy')))]",
-        "siteConfig": {
-          "use32BitWorkerProcess": false,
-          "alwaysOn": true,
-          "phpVersion": "",
-          "defaultDocuments": [
-            "index.html"
-          ]
-        }
-      },
-      "location": "[parameters('location')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', variables('repHostingPlanNameTidy'))]"
-      ],
-      "tags": {
-        "provider": "[variables('sitecoreTags').provider]",
-        "logicalName": "[variables('sitecoreTags').rep]"
-      }
+      ]
     },
     {
       "type": "Microsoft.Sql/servers",
